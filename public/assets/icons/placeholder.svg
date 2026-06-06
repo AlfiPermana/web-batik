@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="placeholder">
+  <rect x="1" y="1" width="118" height="58" rx="8" fill="#F3F4F6" stroke="#D1D5DB" stroke-width="2"/>
+  <path d="M18 41l14-14 12 12 10-10 16 16" fill="none" stroke="#9CA3AF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="36" cy="22" r="5" fill="#9CA3AF"/>
+  <text x="60" y="54" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="10" fill="#6B7280">ICON</text>
+</svg>

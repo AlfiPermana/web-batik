@@ -1,0 +1,1 @@
+{{ \App\View\Components\Icon::getUrl($method) }}

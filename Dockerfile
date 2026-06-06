@@ -1,16 +1,20 @@
 # Stage 1: Build frontend assets
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app
+
+# Copy all files (including local vendor directory now that it's allowed in .dockerignore)
 COPY . .
+
+# Build assets (Vite can now resolve @import '../../vendor/livewire/flux/dist/flux.css')
 RUN npm ci && npm run build
 
-# Stage 2: Main Application
+
+# Stage 2: Production Application Image
 FROM php:8.2-fpm-alpine
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies and php extensions
+# Install production system dependencies
 RUN apk add --no-cache \
     nginx \
     supervisor \
@@ -30,24 +34,11 @@ RUN apk add --no-cache \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip opcache
 
-# Get composer
-COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
-
-# Copy application files
+# Copy application files (including local vendor folder)
 COPY . .
 
-# Copy compiled frontend assets from frontend-builder stage
+# Copy compiled assets from frontend-builder stage
 COPY --from=frontend-builder /app/public/build ./public/build
-
-# Handle flux license arguments if provided (Flux UI components require authentication)
-ARG FLUX_USERNAME
-ARG FLUX_LICENSE_KEY
-RUN if [ -n "$FLUX_USERNAME" ] && [ -n "$FLUX_LICENSE_KEY" ]; then \
-        composer config http-basic.composer.fluxui.dev "$FLUX_USERNAME" "$FLUX_LICENSE_KEY"; \
-    fi
-
-# Install production dependencies
-RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Setup Supervisor log directory
 RUN mkdir -p /var/log/supervisor

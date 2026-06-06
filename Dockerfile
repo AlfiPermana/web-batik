@@ -5,6 +5,9 @@ WORKDIR /app
 # Copy all files (including local vendor directory now that it's allowed in .dockerignore)
 COPY . .
 
+# Debug: Print the folder structure to verify vendor files are copied
+RUN ls -la && ls -la vendor/ || true
+
 # Build assets (Vite can now resolve @import '../../vendor/livewire/flux/dist/flux.css')
 RUN npm ci && npm run build
 

@@ -5,8 +5,7 @@ services:
             context: .
             dockerfile: Dockerfile
             args:
-                FLUX_USERNAME: ${FLUX_USERNAME:-}
-                FLUX_LICENSE_KEY: ${FLUX_LICENSE_KEY:-}
+                GITHUB_TOKEN: ${GITHUB_TOKEN:-}
         image: web-batik:latest
         container_name: batik-app
         restart: unless-stopped

@@ -1,5 +1,5 @@
 # Stage 1: Build PHP dependencies (Public Packagist)
-FROM php:8.2-fpm-alpine AS php-builder
+FROM php:8.4-fpm-alpine AS php-builder
 
 WORKDIR /app
 
@@ -58,7 +58,7 @@ RUN npm run build
 
 
 # Stage 3: Production Application Image
-FROM php:8.2-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 WORKDIR /var/www/html
 

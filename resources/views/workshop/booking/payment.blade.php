@@ -353,19 +353,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const method = document.querySelector('input[name="payment_method"]:checked');
             if (!method) {
-                alert('Silakan pilih metode pembayaran');
+                Swal.fire({ title: 'Metode Pembayaran', text: 'Silakan pilih metode pembayaran', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
 
             const proofFileInput = document.getElementById('proofFile');
             if ((method.value === 'bank_transfer' || method.value === 'ewallet') && (!proofFileInput || !proofFileInput.files.length)) {
-                alert('Silakan upload bukti pembayaran');
+                Swal.fire({ title: 'Bukti Pembayaran', text: 'Silakan upload bukti pembayaran', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
 
             const agreeCheckbox = document.querySelector('input[name="agree_terms"]:checked');
             if (!agreeCheckbox) {
-                alert('Silakan setujui syarat dan ketentuan');
+                Swal.fire({ title: 'Syarat & Ketentuan', text: 'Silakan setujui syarat dan ketentuan', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
 
@@ -381,13 +381,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const paymentMethod = document.querySelector('select[name="payment_method"]');
             if (!paymentMethod || !paymentMethod.value) {
-                alert('Silakan pilih metode pembayaran');
+                Swal.fire({ title: 'Metode Pembayaran', text: 'Silakan pilih metode pembayaran', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
 
             const agreeCheckbox = document.querySelector('input[name="agree_terms"]:checked');
             if (!agreeCheckbox) {
-                alert('Silakan setujui syarat dan ketentuan');
+                Swal.fire({ title: 'Syarat & Ketentuan', text: 'Silakan setujui syarat dan ketentuan', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
 
@@ -438,18 +438,18 @@ function handleModalPaymentSubmit(e) {
     const submitBtn = document.getElementById('submitPaymentBtn');
 
     if (!paymentMethodType) {
-        alert('Pilih metode pembayaran terlebih dahulu');
+        Swal.fire({ title: 'Metode Pembayaran', text: 'Pilih metode pembayaran terlebih dahulu', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
         return;
     }
 
     if (!agreeTerms) {
-        alert('Setujui syarat dan ketentuan terlebih dahulu');
+        Swal.fire({ title: 'Syarat & Ketentuan', text: 'Setujui syarat dan ketentuan terlebih dahulu', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
         return;
     }
 
     // Validate Tripay method selection
     if (paymentMethodType.value === 'tripay' && !tripayMethod.value) {
-        alert('Pilih metode pembayaran Tripay terlebih dahulu');
+        Swal.fire({ title: 'Metode Pembayaran', text: 'Pilih metode pembayaran Tripay terlebih dahulu', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
         return;
     }
 

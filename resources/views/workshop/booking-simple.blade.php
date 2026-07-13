@@ -296,14 +296,14 @@
             // Check schedule selected
             const scheduleId = document.getElementById('scheduleId').value;
             if (!scheduleId) {
-                alert('⚠️ Pilih jadwal terlebih dahulu!');
+                Swal.fire({ title: 'Jadwal Diperlukan', text: 'Pilih jadwal terlebih dahulu!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return false;
             }
             
             // Check T&C
             const agreeTerms = document.getElementById('agreeTerms').checked;
             if (!agreeTerms) {
-                alert('⚠️ Anda harus menyetujui Syarat & Ketentuan!');
+                Swal.fire({ title: 'Syarat & Ketentuan', text: 'Anda harus menyetujui Syarat & Ketentuan!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return false;
             }
             
@@ -329,7 +329,7 @@
             // Get payment method from dropdown
             const paymentMethod = document.getElementById('paymentMethodSelect').value;
             if (!paymentMethod) {
-                alert('⚠️ Pilih metode pembayaran terlebih dahulu!');
+                Swal.fire({ title: 'Metode Pembayaran', text: 'Pilih metode pembayaran terlebih dahulu!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
             
@@ -360,7 +360,7 @@
                 console.log('✅ Booking response:', data);
                 
                 if (!data.success) {
-                    alert('❌ ' + (data.message || 'Gagal membuat booking'));
+                    Swal.fire({ title: 'Gagal', text: data.message || 'Gagal membuat booking', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     if (btn) {
                         btn.disabled = false;
                         btn.textContent = 'Bayar Sekarang';
@@ -386,7 +386,7 @@
             })
             .catch(err => {
                 console.error('❌ Error:', err);
-                alert('❌ ' + err.message);
+                Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 if (btn) {
                     btn.disabled = false;
                     btn.textContent = 'Bayar Sekarang';
@@ -415,7 +415,7 @@
                 console.log('✅ Payment response:', data);
                 
                 if (!data.success) {
-                    alert('❌ ' + (data.message || 'Gagal memproses pembayaran'));
+                    Swal.fire({ title: 'Gagal', text: data.message || 'Gagal memproses pembayaran', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     return;
                 }
                 
@@ -424,7 +424,7 @@
             })
             .catch(err => {
                 console.error('❌ Error:', err);
-                alert('❌ ' + err.message);
+                Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             });
         }
 

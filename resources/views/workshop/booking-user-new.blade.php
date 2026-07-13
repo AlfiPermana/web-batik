@@ -216,25 +216,25 @@
         function goToStep(step) {
             // Validate current step before moving
             if (currentStep === 1 && !selectedSchedule) {
-                alert('Pilih slot terlebih dahulu!');
+                Swal.fire({ title: 'Pilih Slot', text: 'Pilih slot terlebih dahulu!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
             if (currentStep === 2) {
                 const count = parseInt(document.getElementById('participantCount').value);
                 if (!count || count < 1) {
-                    alert('Input jumlah peserta yang valid!');
+                    Swal.fire({ title: 'Jumlah Peserta', text: 'Input jumlah peserta yang valid!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     return;
                 }
             }
             if (currentStep === 3) {
                 if (!document.getElementById('customerName').value || !document.getElementById('customerEmail').value || !document.getElementById('customerPhone').value) {
-                    alert('Isi semua data diri!');
+                    Swal.fire({ title: 'Data Diri', text: 'Isi semua data diri!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     return;
                 }
             }
             if (currentStep === 4 && @auth true @else false @endauth) {
                 if (!selectedAddress) {
-                    alert('Pilih alamat pengiriman!');
+                    Swal.fire({ title: 'Alamat', text: 'Pilih alamat pengiriman!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     return;
                 }
             }
@@ -392,7 +392,7 @@
             };
 
             if (!data.street || !data.city || !data.province) {
-                alert('Isi semua field!');
+                Swal.fire({ title: 'Form Tidak Lengkap', text: 'Isi semua field!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
 
@@ -408,7 +408,7 @@
             .then(addr => {
                 closeAddAddressModal();
                 loadAddresses();
-                alert('Alamat berhasil ditambahkan!');
+                Swal.fire({ title: 'Berhasil', text: 'Alamat berhasil ditambahkan!', icon: 'success', iconColor: '#10b981', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             });
         }
         @endauth

@@ -32,8 +32,9 @@ class CustomerMiddleware
                 'ip' => $request->ip()
             ]);
             
+            // Redirect admin to admin dashboard instead of non-existent 'dashboard' route
             if ($user->isAdmin()) {
-                return redirect()->route('dashboard')
+                return redirect()->route('admin.dashboard')
                     ->with('error', 'This area is for customers only.');
             }
 

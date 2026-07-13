@@ -301,11 +301,11 @@
         const agree = el('wsAgree')?.checked;
 
         if (!method) {
-            alert('Pilih metode pembayaran terlebih dahulu');
+            Swal.fire({ title: 'Metode Pembayaran', text: 'Pilih metode pembayaran terlebih dahulu', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             return;
         }
         if (!agree) {
-            alert('Centang persetujuan untuk melanjutkan');
+            Swal.fire({ title: 'Persetujuan Diperlukan', text: 'Centang persetujuan untuk melanjutkan', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             return;
         }
 
@@ -408,7 +408,7 @@
             wsPollTimer = setInterval(pollStatus, 3000);
 
         } catch (e) {
-            alert(e?.message || 'Terjadi kesalahan saat memproses pembayaran');
+            Swal.fire({ title: 'Pembayaran Gagal', text: e?.message || 'Terjadi kesalahan saat memproses pembayaran', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
         } finally {
             if (payBtn) {
                 payBtn.disabled = false;

@@ -84,10 +84,10 @@
                                             <flux:button size="sm" :href="route('admin.workshop.show', $workshop)" variant="ghost">Lihat</flux:button>
                                             <flux:button size="sm" :href="route('admin.workshop.edit', $workshop)" variant="ghost">Edit</flux:button>
                                             <flux:button size="sm" :href="route('admin.workshop.bookings', $workshop)" variant="ghost">Booking</flux:button>
-                                            <form action="{{ route('admin.workshop.destroy', $workshop) }}" method="POST" onsubmit="return confirm('Hapus workshop ini?')">
+                                            <form action="{{ route('admin.workshop.destroy', $workshop) }}" method="POST" class="swal-delete-form" data-name="{{ $workshop->title }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <flux:button size="sm" type="submit" variant="danger">Hapus</flux:button>
+                                                <flux:button size="sm" type="button" variant="danger" onclick="swConfirmDelete(this)">Hapus</flux:button>
                                             </form>
                                         </div>
                                     </td>
@@ -108,4 +108,23 @@
             {{ $workshops->links() }}
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+    function swConfirmDelete(btn) {
+        const form = btn.closest('form');
+        const name = form.dataset.name || 'item ini';
+        Swal.fire({
+            title: 'Hapus Workshop?',
+            html: 'Workshop <strong>' + name + '</strong> akan dihapus permanen.',
+            icon: 'warning', iconColor: '#ef4444',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!', confirmButtonColor: '#ef4444',
+            cancelButtonText: 'Batal', cancelButtonColor: '#6b7280',
+            reverseButtons: true, focusCancel: true,
+            customClass: { popup: 'rounded-2xl shadow-2xl' },
+        }).then(r => { if (r.isConfirmed) form.submit(); });
+    }
+    </script>
+    @endpush
 </x-layouts.app>

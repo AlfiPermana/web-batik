@@ -1129,6 +1129,11 @@ class Checkout extends Component
     public function closeTripayModal()
     {
         $this->showTripayModal = false;
+
+        if ($this->paymentStatus === 'paid') {
+            return redirect()->route('payment.success', ['order' => $this->currentOrderId])
+                ->with('success', 'Pembayaran berhasil! Terima kasih atas pesanan Anda.');
+        }
     }
 
     /**
@@ -1269,7 +1274,7 @@ class Checkout extends Component
             $expiresLabel = $expiresAt?->format('d-m-Y H:i:s');
 
             if ($order->payment_status === 'paid') {
-                $paidAt = $order->paid_at ?? now();
+                $paidAt = ($order->paid_at ? $order->paid_at->setTimezone('Asia/Jakarta') : now()->setTimezone('Asia/Jakarta'));
                 $this->paymentPaidAt = $paidAt->format('d F Y H:i');
                 $this->paymentStatusMessage = "Transaksi ini sudah berhasil dibayar pada {$this->paymentPaidAt} WIB";
 
@@ -1280,6 +1285,10 @@ class Checkout extends Component
                     'tripay_fee' => $this->tripayFee,
                     'items_count' => count($this->orderItems),
                 ]);
+
+                // Auto redirect immediately to success page!
+                return redirect()->route('payment.success', ['order' => $order->id])
+                    ->with('success', 'Pembayaran berhasil! Terima kasih atas pesanan Anda.');
             } elseif ($order->payment_status === 'expired') {
                 $this->paymentStatusMessage = 'Pembayaran kadaluarsa.';
             } elseif ($order->payment_status === 'failed') {
@@ -1328,7 +1337,7 @@ class Checkout extends Component
             // Close modal and redirect
             $this->showTripayModal = false;
             
-            return redirect()->route('checkout.success', ['order_id' => $order->id])
+            return redirect()->route('payment.success', ['order' => $order->id])
                 ->with('success', 'Pembayaran berhasil! Terima kasih atas pesanan Anda.');
         } catch (\Exception $e) {
             Log::error('Error completing payment: ' . $e->getMessage());

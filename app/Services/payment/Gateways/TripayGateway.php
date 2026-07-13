@@ -189,37 +189,52 @@ class TripayGateway implements GatewayInterface
             ]);
 
             $result = $response->json();
-            $rawData = $result['data'] ?? $result;
-            $message = (string) ($result['message'] ?? ($rawData['message'] ?? ''));
-            $normalizedMessage = strtoupper($message);
-            $normalizedStatus = match (true) {
-                str_contains($normalizedMessage, 'UNPAID') => 'UNPAID',
-                str_contains($normalizedMessage, 'DIBAYAR'),
-                preg_match('/\bPAID\b/', $normalizedMessage) === 1 => 'PAID',
-                str_contains($normalizedMessage, 'EXPIRED'),
-                str_contains($normalizedMessage, 'KADALUARSA') => 'EXPIRED',
-                str_contains($normalizedMessage, 'FAILED'),
-                str_contains($normalizedMessage, 'GAGAL') => 'FAILED',
-                str_contains($normalizedMessage, 'REFUND') => 'REFUNDED',
-                default => null,
-            };
+            $rawData = $result['data'] ?? null;
             $normalizedData = is_array($rawData) ? $rawData : [];
-            if ($normalizedStatus) {
-                $normalizedData['status'] = $normalizedStatus;
+
+            // ✅ Prioritas utama: gunakan field 'status' dari data Tripay (paling akurat)
+            // Fallback ke parsing pesan teks HANYA jika field 'status' tidak ada di response
+            $tripayStatus = isset($normalizedData['status']) ? strtoupper((string) $normalizedData['status']) : null;
+
+            if ($tripayStatus === null) {
+                // Fallback: coba parse dari pesan jika field status tidak ada
+                $message = (string) ($result['message'] ?? '');
+                $normalizedMessage = strtoupper($message);
+                $tripayStatus = match (true) {
+                    str_contains($normalizedMessage, 'UNPAID') => 'UNPAID',
+                    str_contains($normalizedMessage, 'EXPIRED'),
+                    str_contains($normalizedMessage, 'KADALUARSA') => 'EXPIRED',
+                    str_contains($normalizedMessage, 'FAILED'),
+                    str_contains($normalizedMessage, 'GAGAL') => 'FAILED',
+                    str_contains($normalizedMessage, 'REFUND') => 'REFUNDED',
+                    // PAID hanya dari pesan jika memang field 'status' tidak ada sama sekali
+                    str_contains($normalizedMessage, 'DIBAYAR'),
+                    preg_match('/\bPAID\b/', $normalizedMessage) === 1 => 'PAID',
+                    default => null,
+                };
+
+                if ($tripayStatus !== null) {
+                    $normalizedData['status'] = $tripayStatus;
+                }
             }
+
             $normalizedData['reference'] = $normalizedData['reference'] ?? $reference;
+
+            // success = response HTTP OK AND Tripay 'success' field explicitly true
+            $isSuccess = $response->successful() && ($result['success'] ?? false) === true;
 
             Log::debug('Tripay check-status response', [
                 'reference' => $reference,
                 'url' => $this->statusUrl,
-                'status' => $response->status(),
+                'http_status' => $response->status(),
                 'successful' => $response->successful(),
+                'tripay_success' => $result['success'] ?? null,
+                'tripay_status_field' => $normalizedData['status'] ?? null,
                 'response' => $result,
-                'normalized_status' => $normalizedStatus,
             ]);
 
             return [
-                'success' => $response->successful() && (($result['success'] ?? true) !== false),
+                'success' => $isSuccess,
                 'message' => $result['message'] ?? 'Tripay status fetched',
                 'data' => $normalizedData,
             ];

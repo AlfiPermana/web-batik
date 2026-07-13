@@ -527,7 +527,13 @@
                 showStep('pending');
 
             } catch (e) {
-                alert(e?.message || 'Terjadi kesalahan saat memproses pembayaran');
+                Swal.fire({
+                    title: 'Pembayaran Gagal',
+                    text: e?.message || 'Terjadi kesalahan saat memproses pembayaran',
+                    icon: 'error', iconColor: '#ef4444',
+                    confirmButtonText: 'OK', confirmButtonColor: '#b45309',
+                    customClass: { popup: 'rounded-2xl shadow-2xl' },
+                });
                 showStep('select');
             } finally {
                 if (btn) { btn.disabled = false; btn.textContent = 'Bayar'; }
@@ -572,8 +578,14 @@
             if (!currentOrderId) return;
             const method = el('orderPayMethodSelect')?.value;
             const agree = el('orderPayAgree')?.checked;
-            if (!method) { alert('Pilih metode pembayaran terlebih dahulu'); return; }
-            if (!agree) { alert('Centang persetujuan untuk melanjutkan'); return; }
+            if (!method) {
+                Swal.fire({ title: 'Pilih Metode', text: 'Pilih metode pembayaran terlebih dahulu.', icon: 'warning', iconColor: '#f59e0b', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
+                return;
+            }
+            if (!agree) {
+                Swal.fire({ title: 'Persetujuan Diperlukan', text: 'Centang persetujuan untuk melanjutkan.', icon: 'info', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
+                return;
+            }
             processPayment(method);
         };
 

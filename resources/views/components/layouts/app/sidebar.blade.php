@@ -10,7 +10,7 @@
     <flux:sidebar sticky stashable class="border-e border-amber-200/70 bg-white dark:border-zinc-700 dark:bg-zinc-900">
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-        <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('customer.dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+        <a href="{{ auth()->user()->role === 'admin' ? route('landing.home') : route('customer.dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
             <img src="{{ asset('assets/logo.png') }}" alt="{{ config('app.name', 'Laravel') }}" class="h-10 sm:h-12 w-auto object-contain">
         </a>
 

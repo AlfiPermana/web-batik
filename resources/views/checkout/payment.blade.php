@@ -282,12 +282,12 @@
                         setDeadlineLabel(data.expired_at);
                     }
                 } else {
-                    alert(data.error || 'Gagal membuka halaman pembayaran');
+                    Swal.fire({ title: 'Gagal', text: data.error || 'Gagal membuka halaman pembayaran', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan');
+                Swal.fire({ title: 'Terjadi Kesalahan', text: 'Gagal terhubung ke server pembayaran.', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             });
     }
 
@@ -312,15 +312,28 @@
                 }
 
                 if (data.payment_status === 'paid') {
-                    alert('Pembayaran berhasil!');
-                    closeTripayModal();
-                    window.location.href = '{{ route("payment.success", $order->id) }}';
+                    Swal.fire({
+                        title: 'Pembayaran Berhasil! 🎉',
+                        text: 'Terima kasih, pembayaran Anda telah dikonfirmasi.',
+                        icon: 'success', iconColor: '#10b981',
+                        confirmButtonText: 'Lihat Detail', confirmButtonColor: '#b45309',
+                        allowOutsideClick: false,
+                        customClass: { popup: 'rounded-2xl shadow-2xl' },
+                    }).then(() => {
+                        closeTripayModal();
+                        window.location.href = '{{ route("payment.success", $order->id) }}';
+                    });
                     return;
                 }
 
                 if (['failed', 'expired', 'refunded'].includes(data.payment_status)) {
-                    alert(`Pembayaran ${formatPaymentStatusLabel(data.payment_status)}.`);
-                    closeTripayModal();
+                    Swal.fire({
+                        title: 'Status Pembayaran',
+                        text: `Pembayaran ${formatPaymentStatusLabel(data.payment_status)}.`,
+                        icon: 'warning', iconColor: '#f59e0b',
+                        confirmButtonText: 'OK', confirmButtonColor: '#b45309',
+                        customClass: { popup: 'rounded-2xl shadow-2xl' },
+                    }).then(() => closeTripayModal());
                 }
             })
             .catch(() => {});

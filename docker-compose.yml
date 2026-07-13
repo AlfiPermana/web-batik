@@ -10,13 +10,13 @@ services:
         container_name: batik-app
         restart: unless-stopped
         ports:
-            - "9361:80"
+            - "8080:80"
         environment:
             APP_NAME: "Batik Giri Alam"
             APP_ENV: production
             APP_DEBUG: "false"
             APP_KEY: "base64:JTOO7wbaGuMM7v1/nn8NB7G0UcvROe0CTJdHiArc1oo=" # Change in actual production
-            APP_URL: "http://207.180.227.185:9361"
+            APP_URL: "http://207.180.227.185:8080"
 
             # Database
             DB_CONNECTION: mysql
@@ -82,6 +82,15 @@ services:
             - "6379:6379"
         volumes:
             - redis_data:/data
+
+    # Cloudflare Quick Tunnel
+    tunnel:
+        image: cloudflare/cloudflared:latest
+        container_name: batik-tunnel
+        restart: unless-stopped
+        command: tunnel --url http://app:80
+        depends_on:
+            - app
 
 volumes:
     app_storage:

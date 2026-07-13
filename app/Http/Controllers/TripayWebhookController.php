@@ -139,6 +139,23 @@ class TripayWebhookController extends Controller
                 $order->updateOrderStatus('processing', 'Pembayaran dikonfirmasi otomatis dari Tripay webhook');
             }
 
+            // Handle expired/failed: cancel the order regardless of current status
+            // This fixes the race condition where frontend polling sets status=processing,
+            // then EXPIRED webhook arrives and must override it.
+            if (in_array($paymentStatus, ['expired', 'failed'], true)
+                && !in_array($order->status, ['delivered', 'cancelled'], true)) {
+                $order->updateOrderStatus(
+                    'cancelled',
+                    'Pembayaran ' . strtoupper($paymentStatus) . ' - pesanan dibatalkan otomatis oleh sistem'
+                );
+
+                Log::info('Order cancelled due to expired/failed payment', [
+                    'order_id'        => $order->id,
+                    'payment_status'  => $paymentStatus,
+                    'previous_status' => $order->getOriginal('status'),
+                ]);
+            }
+
             Log::info('Order payment updated', [
                 'order_id' => $order->id,
                 'order_status' => $order->fresh()->status,

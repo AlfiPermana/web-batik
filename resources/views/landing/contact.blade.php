@@ -120,9 +120,9 @@
                             <h3 class="text-base font-bold mb-2" style="font-family: 'Poppins', sans-serif; color: #8B4513;">
                                 Email
                             </h3>
-                            <a href="mailto:batikgirialam@gmail.com" class="text-gray-700 text-sm hover:text-gray-900"
+                            <a href="mailto:girialamsupport@gmail.com" class="text-gray-700 text-sm hover:text-gray-900"
                                 style="font-family: 'Poppins', sans-serif;">
-                                batikgirialam@gmail.com
+                                girialamsupport@gmail.com   
                             </a>
                         </div>
                     </div>

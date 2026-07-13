@@ -493,8 +493,13 @@
         
         if (!statusSelect.value) {
             e.preventDefault();
-            alert('⚠️ Silakan pilih status baru terlebih dahulu!');
-            statusSelect.focus();
+            Swal.fire({
+                title: 'Status Belum Dipilih',
+                text: 'Silakan pilih status baru terlebih dahulu!',
+                icon: 'warning', iconColor: '#f59e0b',
+                confirmButtonText: 'OK', confirmButtonColor: '#b45309',
+                customClass: { popup: 'rounded-2xl shadow-2xl' },
+            }).then(() => { statusSelect.focus(); });
             statusSelect.style.borderColor = '#ef4444';
             statusSelect.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
             return false;

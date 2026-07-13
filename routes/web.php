@@ -146,17 +146,20 @@ Route::middleware(['auth'])->group(function () {
         ]);
 
         // Order Management Routes
-        Route::resource('orders', OrderController::class)->only(['index', 'show']);
+        Route::resource('orders', OrderController::class)->only(['index', 'show', 'destroy']);
         Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::post('orders/{order}/invoice', [OrderController::class, 'generateInvoice'])->name('orders.generateInvoice');
         Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+        Route::delete('orders/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulkDelete');
+        Route::delete('workshop-bookings/bulk-delete', [OrderController::class, 'bulkDeleteBookings'])->name('orders.bulkDeleteBookings');
+        Route::delete('workshop-bookings/{booking}', [OrderController::class, 'destroyBooking'])->name('orders.destroyBooking');
 
         // Shipping Origin (Admin address for shipping calculation)
         Route::view('settings/shipping-origin', 'admin.settings.shipping-origin')->name('settings.shipping-origin');
     });
 
     // Customer Dashboard & Routes
-    Route::middleware([CustomerMiddleware::class])->group(function () {
+    Route::middleware([CustomerMiddleware::class, 'verified'])->group(function () {
         Route::get('customer-dashboard', function () {
             $user = auth('web')->user();
 
@@ -285,15 +288,21 @@ Route::get('test-livewire', function () {
 
 // Checkout & Payment Routes (Standalone, not in dashboard)
 Route::middleware(['auth'])->group(function () {
-    Route::get('checkout', \App\Livewire\Checkout::class)->name('checkout');
-    Route::get('payment/{order}', [\App\Http\Controllers\PaymentController::class, 'show'])->name('payment.checkout');
-    Route::get('payment/{order}/success', [\App\Http\Controllers\PaymentController::class, 'success'])->name('payment.success');
-    Route::get('payment/{order}/failed', [\App\Http\Controllers\PaymentController::class, 'failed'])->name('payment.failed');
+    Route::get('verify-email', function () {
+        return view('auth.verify-email-page');
+    })->name('verification.notice');
     
-    // API Payment Routes
-    Route::get('api/payment/tripay/checkout', [\App\Http\Controllers\Api\PaymentApiController::class, 'generateTripayCheckout']);
-    Route::get('api/payment/{order}/status', [\App\Http\Controllers\Api\PaymentApiController::class, 'getPaymentStatus']);
-    Route::post('api/payment/{order}/process', [\App\Http\Controllers\Api\PaymentApiController::class, 'processOrderPayment']);
+    Route::middleware(['verified'])->group(function () {
+        Route::get('checkout', \App\Livewire\Checkout::class)->name('checkout');
+        Route::get('payment/{order}', [\App\Http\Controllers\PaymentController::class, 'show'])->name('payment.checkout');
+        Route::get('payment/{order}/success', [\App\Http\Controllers\PaymentController::class, 'success'])->name('payment.success');
+        Route::get('payment/{order}/failed', [\App\Http\Controllers\PaymentController::class, 'failed'])->name('payment.failed');
+        
+        // API Payment Routes
+        Route::get('api/payment/tripay/checkout', [\App\Http\Controllers\Api\PaymentApiController::class, 'generateTripayCheckout']);
+        Route::get('api/payment/{order}/status', [\App\Http\Controllers\Api\PaymentApiController::class, 'getPaymentStatus']);
+        Route::post('api/payment/{order}/process', [\App\Http\Controllers\Api\PaymentApiController::class, 'processOrderPayment']);
+    });
 });
 
 // Tripay Webhook (HARUS tanpa auth middleware untuk Tripay bisa kirim callback)

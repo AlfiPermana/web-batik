@@ -282,4 +282,94 @@ class OrderController extends Controller
 
         return back()->with('error', 'Pesanan tidak dapat dibatalkan pada status ini');
     }
+
+    /**
+     * Bulk delete selected product orders
+     */
+    public function bulkDelete(Request $request)
+    {
+        $validated = $request->validate([
+            'order_ids'   => 'required|array|min:1',
+            'order_ids.*' => 'integer|exists:orders,id',
+        ]);
+
+        $ids   = $validated['order_ids'];
+        $count = 0;
+
+        DB::transaction(function () use ($ids, &$count) {
+            $orders = Order::whereIn('id', $ids)->get();
+            foreach ($orders as $order) {
+                $order->items()->delete();
+                $order->statusHistories()->delete();
+                $order->delete();
+                $count++;
+            }
+        });
+
+        return back()->with('success', "{$count} pesanan berhasil dihapus.");
+    }
+
+    /**
+     * Bulk delete selected workshop bookings
+     */
+    public function bulkDeleteBookings(Request $request)
+    {
+        $validated = $request->validate([
+            'booking_ids'   => 'required|array|min:1',
+            'booking_ids.*' => 'integer|exists:workshop_bookings,id',
+        ]);
+
+        $ids   = $validated['booking_ids'];
+        $count = 0;
+
+        DB::transaction(function () use ($ids, &$count) {
+            $bookings = WorkshopBooking::whereIn('id', $ids)->with('payments', 'slotSchedule')->get();
+            foreach ($bookings as $booking) {
+                // Kembalikan slot jika belum ada confirmed payment
+                $hasConfirmed = $booking->payments->contains(fn($p) => $p->payment_status === 'confirmed');
+                if (!$hasConfirmed && $booking->slotSchedule && $booking->slotSchedule->booked_count > 0) {
+                    $booking->slotSchedule->cancelParticipants((int) $booking->num_participants);
+                }
+                $booking->payments()->delete();
+                $booking->delete();
+                $count++;
+            }
+        });
+
+        return back()->with('success', "{$count} booking workshop berhasil dihapus.");
+    }
+
+    /**
+     * Delete a single order
+     */
+    public function destroy(Order $order)
+    {
+        DB::transaction(function () use ($order) {
+            $order->items()->delete();
+            $order->statusHistories()->delete();
+            $order->delete();
+        });
+
+        return back()->with('success', 'Pesanan berhasil dihapus.');
+    }
+
+    /**
+     * Delete a single workshop booking
+     */
+    public function destroyBooking($id)
+    {
+        $booking = WorkshopBooking::findOrFail($id);
+        
+        DB::transaction(function () use ($booking) {
+            // Kembalikan slot jika belum ada confirmed payment
+            $hasConfirmed = $booking->payments->contains(fn($p) => $p->payment_status === 'confirmed');
+            if (!$hasConfirmed && $booking->slotSchedule && $booking->slotSchedule->booked_count > 0) {
+                $booking->slotSchedule->cancelParticipants((int) $booking->num_participants);
+            }
+            $booking->payments()->delete();
+            $booking->delete();
+        });
+
+        return back()->with('success', 'Booking workshop berhasil dihapus.');
+    }
 }

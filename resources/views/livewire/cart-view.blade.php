@@ -29,7 +29,7 @@
                                     $size = $item['size'];
                                     $itemSubtotal = $item['price'] * $item['quantity'];
                                 @endphp
-                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                <tr wire:key="cart-item-{{ $item['id'] }}" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                     <!-- Product Image -->
                                     <td class="px-2 md:px-4 py-2 md:py-3">
                                         <div class="h-12 md:h-14 w-12 md:w-14 rounded bg-gray-100 overflow-hidden flex-shrink-0">
@@ -63,8 +63,11 @@
                                     <td class="px-2 md:px-4 py-2 md:py-3">
                                         <div class="flex items-center justify-center gap-1">
                                             <button 
-                                                wire:click="updateQuantity({{ $item['id'] }}, {{ max(1, $item['quantity'] - 1) }})"
-                                                class="w-6 h-6 md:w-6 md:h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600 text-xs font-bold">
+                                                wire:click="decrementQuantity({{ $item['id'] }})"
+                                                wire:loading.attr="disabled"
+                                                wire:target="decrementQuantity({{ $item['id'] }})"
+                                                class="w-6 h-6 md:w-6 md:h-6 rounded border flex items-center justify-center text-xs font-bold transition-colors {{ $item['quantity'] <= 1 ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-200' }}"
+                                                {{ $item['quantity'] <= 1 ? 'disabled' : '' }}>
                                                 −
                                             </button>
                                             <input 
@@ -72,10 +75,14 @@
                                                 wire:change="updateQuantity({{ $item['id'] }}, $event.target.value)"
                                                 value="{{ $item['quantity'] }}"
                                                 min="1"
+                                                max="{{ $size ? ($size['stock'] ?? 100) : 100 }}"
                                                 class="w-8 md:w-10 text-center border border-gray-300 rounded bg-white text-gray-900 font-semibold py-0.5 text-xs">
                                             <button 
-                                                wire:click="updateQuantity({{ $item['id'] }}, {{ $item['quantity'] + 1 }})"
-                                                class="w-6 h-6 md:w-6 md:h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600 text-xs font-bold">
+                                                wire:click="incrementQuantity({{ $item['id'] }})"
+                                                wire:loading.attr="disabled"
+                                                wire:target="incrementQuantity({{ $item['id'] }})"
+                                                class="w-6 h-6 md:w-6 md:h-6 rounded border flex items-center justify-center text-xs font-bold transition-colors {{ $item['quantity'] >= ($size ? ($size['stock'] ?? 0) : 0) ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-200' }}"
+                                                {{ $item['quantity'] >= ($size ? ($size['stock'] ?? 0) : 0) ? 'disabled' : '' }}>
                                                 +
                                             </button>
                                         </div>

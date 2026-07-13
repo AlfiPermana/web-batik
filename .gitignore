@@ -1,23 +1,60 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
+# Dependencies & Packages
+/vendor/
+/node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log*
+pnpm-debug.log*
+
+# Laravel specific files
 .env
 .env.backup
 .env.production
-.phpactor.json
+.env.*.local
 .phpunit.result.cache
+/.phpunit.cache
+/storage/*.key
+/storage/pail
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
 /auth.json
-/.fleet
+
+# Public files
+/public/build
+/public/hot
+/public/storage
+
+# OS Generated Files (Wajib untuk mencegah file sampah OS)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Local Database Files (Mencegah upload database lokal)
+*.sqlite
+*.sqlite3
+*.db
+
+# Log files and cache
+/storage/logs/*.log
+/bootstrap/cache/*.php
+/storage/framework/views/*.php
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+
+# IDE & Editor folders (Mencegah konfigurasi laptop Anda tertimpa dengan developer lain)
 /.idea
-/.nova
 /.vscode
+/.fleet
+/.nova
 /.zed
+.phpactor.json
+*.sublime-project
+*.sublime-workspace
+/.kombai
+
+# Executables / Binaries
+cloudflared.exe

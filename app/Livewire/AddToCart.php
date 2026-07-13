@@ -71,6 +71,18 @@ class AddToCart extends Component
         }
     }
 
+    #[On('quantity-updated')]
+    public function onQuantityUpdated($payload = null)
+    {
+        if (is_array($payload)) {
+            $productId = $payload['productId'] ?? null;
+            if ($productId !== null && (int) $productId !== (int) $this->productId) {
+                return;
+            }
+            $this->quantity = (int) ($payload['qty'] ?? 1);
+        }
+    }
+
     public function addToCart()
     {
         if (!Auth::check()) {
@@ -109,19 +121,34 @@ class AddToCart extends Component
                 ->where('product_size_id', $size->id)
                 ->first();
 
-            if ($existing && (int) $existing->quantity >= $stock) {
-                $this->dispatch('alert', type: 'error', message: 'Jumlah di keranjang sudah mencapai stok tersedia untuk ukuran ini.');
+            $existingQty = $existing ? (int) $existing->quantity : 0;
+            if ($existingQty >= $stock) {
+                $this->dispatch('alert', type: 'error', message: 'Jumlah di keranjang sudah mencapai batas maksimal stok tersedia.');
                 return;
             }
 
-            $cartItem = $cart->addItem($product, $size, 1);
+            $requestQty = (int) $this->quantity;
+            if ($requestQty < 1) {
+                $requestQty = 1;
+            }
 
-            if ($cartItem) {
-                $cartCount = $cart->items()->count();
-                $this->dispatch('alert', type: 'success', message: 'Produk berhasil ditambahkan ke keranjang!');
-                $this->dispatch('cart-item-count', count: $cartCount);
+            if ($existingQty + $requestQty > $stock) {
+                $toAdd = $stock - $existingQty;
+                $cartItem = $cart->addItem($product, $size, $toAdd);
+                if ($cartItem) {
+                    $cartCount = $cart->items()->count();
+                    $this->dispatch('alert', type: 'warning', message: 'Hanya ' . $toAdd . ' produk yang ditambahkan karena keterbatasan stok.');
+                    $this->dispatch('cart-item-count', count: $cartCount);
+                }
             } else {
-                $this->dispatch('alert', type: 'error', message: 'Gagal menambahkan produk ke keranjang');
+                $cartItem = $cart->addItem($product, $size, $requestQty);
+                if ($cartItem) {
+                    $cartCount = $cart->items()->count();
+                    $this->dispatch('alert', type: 'success', message: 'Produk berhasil ditambahkan ke keranjang!');
+                    $this->dispatch('cart-item-count', count: $cartCount);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Gagal menambahkan produk ke keranjang');
+                }
             }
         } catch (\Exception $e) {
             $this->dispatch('alert', message: __('Error: ') . $e->getMessage(), type: 'error');

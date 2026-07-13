@@ -15,14 +15,12 @@ class Register extends Component
     public $password = '';
     public $password_confirmation = '';
     public $phone_number = '';
-    public $address = '';
 
     protected $rules = [
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         'password' => ['required', 'string', 'min:8', 'confirmed'],
         'phone_number' => ['required', 'string', 'max:25'],
-        'address' => ['required', 'string', 'max:1024'],
     ];
 
     public function register()
@@ -33,7 +31,6 @@ class Register extends Component
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            // set default role for registered users as customer
             'role' => 'customer',
         ]);
 
@@ -41,17 +38,12 @@ class Register extends Component
         if (method_exists($user, 'customerProfile')) {
             $user->customerProfile()->create([
                 'phone_number' => $this->phone_number,
-                'address' => $this->address,
             ]);
         }
+
         Auth::login($user);
 
-        // Redirect customers to their dashboard, otherwise use the app HOME
-        if ($user->isCustomer()) {
-            return redirect()->route('customer.dashboard');
-        }
-
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->route('verification.notice');
     }
 
     public function render()

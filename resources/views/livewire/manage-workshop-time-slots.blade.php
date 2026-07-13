@@ -65,9 +65,9 @@
                                                     {{ $slot['is_active'] ? 'Nonaktifkan' : 'Aktifkan' }}
                                                 </button>
                                                 <button 
-                                                    wire:click="deleteSlot({{ $slot['id'] }})"
-                                                    onclick="return confirm('Yakin hapus?')"
-                                                    class="text-red-500 hover:text-red-700">
+                                                    type="button"
+                                                    class="text-red-500 hover:text-red-700"
+                                                    onclick="swConfirmDeleteSlot({{ $slot['id'] }}, '{{ addslashes($slot['name']) }}', $wire)">
                                                     Hapus
                                                 </button>
                                             </td>
@@ -164,3 +164,18 @@
         </ul>
     </div>
 </div>
+
+<script>
+function swConfirmDeleteSlot(slotId, slotName, wire) {
+    Swal.fire({
+        title: 'Hapus Slot Waktu?',
+        html: 'Slot <strong>' + slotName + '</strong> akan dihapus permanen.',
+        icon: 'warning', iconColor: '#ef4444',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!', confirmButtonColor: '#ef4444',
+        cancelButtonText: 'Batal', cancelButtonColor: '#6b7280',
+        reverseButtons: true, focusCancel: true,
+        customClass: { popup: 'rounded-2xl shadow-2xl' },
+    }).then(r => { if (r.isConfirmed) wire.deleteSlot(slotId); });
+}
+</script>

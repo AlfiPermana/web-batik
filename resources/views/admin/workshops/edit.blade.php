@@ -240,10 +240,10 @@
                                                 {{ $date->schedules()->count() }}
                                             </td>
                                             <td class="px-6 py-4 text-sm">
-                                                <form action="{{ route('admin.workshop.removeDate', $date->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus tanggal ini?')">
+                                                <form action="{{ route('admin.workshop.removeDate', $date->id) }}" method="POST" style="display:inline;" class="swal-delete-date-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-500 hover:text-red-700">
+                                                    <button type="button" class="text-red-500 hover:text-red-700" onclick="swConfirmDeleteDate(this)">
                                                         Hapus
                                                     </button>
                                                 </form>
@@ -279,25 +279,29 @@
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.addEventListener('click', function() {
                 const tabName = this.dataset.tab;
-                
-                // Hide all tabs
-                document.querySelectorAll('.tab-content').forEach(tab => {
-                    tab.classList.add('hidden');
-                });
-                
-                // Remove active style from all buttons
+                document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.add('hidden'); });
                 document.querySelectorAll('.tab-button').forEach(b => {
                     b.classList.remove('border-blue-600', 'text-blue-600');
                     b.classList.add('border-gray-200', 'text-gray-600');
                 });
-                
-                // Show selected tab
                 document.getElementById('tab-' + tabName).classList.remove('hidden');
-                
-                // Add active style to clicked button
                 this.classList.remove('border-gray-200', 'text-gray-600');
                 this.classList.add('border-blue-600', 'text-blue-600');
             });
         });
+
+        function swConfirmDeleteDate(btn) {
+            const form = btn.closest('form');
+            Swal.fire({
+                title: 'Hapus Tanggal?',
+                text: 'Tanggal ini akan dihapus beserta semua jadwal yang terkait.',
+                icon: 'warning', iconColor: '#ef4444',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus!', confirmButtonColor: '#ef4444',
+                cancelButtonText: 'Batal', cancelButtonColor: '#6b7280',
+                reverseButtons: true, focusCancel: true,
+                customClass: { popup: 'rounded-2xl shadow-2xl' },
+            }).then(r => { if (r.isConfirmed) form.submit(); });
+        }
     </script>
 </x-layouts.app>

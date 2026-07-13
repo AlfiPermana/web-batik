@@ -404,9 +404,9 @@
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert('✅ Berhasil disalin ke clipboard!');
+                Swal.fire({ title: 'Berhasil', text: 'Berhasil disalin ke clipboard!', icon: 'success', iconColor: '#10b981', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             }).catch(() => {
-                alert('❌ Gagal menyalin ke clipboard');
+                Swal.fire({ title: 'Gagal', text: 'Gagal menyalin ke clipboard', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             });
         }
 
@@ -463,7 +463,7 @@
                 const participants = parseInt(document.getElementById('participants').value, 10);
                 console.log('Participants:', participants);
                 if (isNaN(participants) || participants < 1) {
-                    alert('⚠️ Jumlah peserta harus minimal 1!');
+                    Swal.fire({ title: 'Jumlah Peserta', text: 'Jumlah peserta harus minimal 1!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     return;
                 }
 
@@ -498,7 +498,7 @@
                 console.log('Modal opened successfully');
             } catch (error) {
                 console.error('Error in openPaymentModal:', error);
-                alert('Error: ' + error.message);
+                Swal.fire({ title: 'Terjadi Kesalahan', text: error.message, icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
             }
         }
 
@@ -692,7 +692,7 @@
             const scheduleId = document.getElementById('scheduleId').value;
             
             if (!scheduleId) {
-                alert('❌ Silahkan pilih jadwal workshop terlebih dahulu!');
+                Swal.fire({ title: 'Jadwal Diperlukan', text: 'Silahkan pilih jadwal workshop terlebih dahulu!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
             
@@ -733,11 +733,11 @@
             const agreeTerms = document.querySelector('input[name="agree_terms"]:checked');
 
             if (!paymentMethod) {
-                alert('⚠️ Silahkan pilih metode pembayaran!');
+                Swal.fire({ title: 'Metode Pembayaran', text: 'Silahkan pilih metode pembayaran!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
             if (!agreeTerms) {
-                alert('⚠️ Silahkan setujui syarat & ketentuan pembayaran!');
+                Swal.fire({ title: 'Syarat & Ketentuan', text: 'Silahkan setujui syarat & ketentuan pembayaran!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
 
@@ -786,13 +786,13 @@
                     console.log('🔄 Processing payment for booking:', bookingId);
                     processPayment(bookingId, paymentMethod);
                 } else {
-                    alert('❌ ' + (data.message || 'Terjadi kesalahan saat membuat booking'));
+                    Swal.fire({ title: 'Gagal', text: data.message || 'Terjadi kesalahan saat membuat booking', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     showStep('stepPaymentMethod');
                 }
             })
             .catch(error => {
                 console.error('❌ submitPaymentForm Error:', error);
-                alert('❌ Terjadi kesalahan: ' + error.message);
+                Swal.fire({ title: 'Terjadi Kesalahan', text: error.message, icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 showStep('stepPaymentMethod');
             });
         }
@@ -829,13 +829,13 @@
                     displayPaymentDetails(data.payment_details, data.amount);
                     startPollingPaymentStatus(bookingId);
                 } else {
-                    alert('❌ ' + (data.message || 'Terjadi kesalahan saat memproses pembayaran'));
+                    Swal.fire({ title: 'Gagal', text: data.message || 'Terjadi kesalahan saat memproses pembayaran', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                     showStep('stepPaymentMethod');
                 }
             })
             .catch(error => {
                 console.error('❌ processPayment Error:', error);
-                alert('❌ Terjadi kesalahan: ' + error.message);
+                Swal.fire({ title: 'Terjadi Kesalahan', text: error.message, icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 showStep('stepPaymentMethod');
             });
         }
@@ -989,7 +989,7 @@
         // PDF Download Function
         function downloadReceiptPDF() {
             if (!window.confirmationData) {
-                alert('❌ Data konfirmasi tidak tersedia.');
+                Swal.fire({ title: 'Data Tidak Tersedia', text: 'Data konfirmasi tidak tersedia.', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
                 return;
             }
             

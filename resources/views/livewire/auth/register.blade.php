@@ -39,15 +39,6 @@
                 :placeholder="__('Enter your phone number')"
             />
 
-            <!-- Address -->
-            <flux:input
-                wire:model="address"
-                :label="__('Address')"
-                type="text"
-                required
-                :placeholder="__('Enter your address')"
-            />
-
             <!-- Password -->
             <flux:input
                 wire:model="password"

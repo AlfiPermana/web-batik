@@ -277,6 +277,30 @@
             updateOutOfStockOverlay(s);
         }
 
+        function syncQuantityToLivewire() {
+            const quantityInput = document.getElementById('quantity');
+            if (!quantityInput) return;
+            const qty = parseInt(quantityInput.value) || 1;
+
+            if (window.Livewire) {
+                if (typeof window.Livewire.dispatch === 'function') {
+                    window.Livewire.dispatch('quantity-updated', { qty: qty, productId: {{ (int) $product->id }} });
+                }
+                
+                // Hard-set to the AddToCart component directly for reliability
+                const atcEl = document.getElementById('addToCartComponent-{{ (int) $product->id }}');
+                const wireId = atcEl?.getAttribute('wire:id');
+                if (wireId && typeof window.Livewire.find === 'function') {
+                    const cmp = window.Livewire.find(wireId);
+                    if (cmp && typeof cmp.set === 'function') {
+                        cmp.set('quantity', qty);
+                    } else if (cmp && cmp.$wire && typeof cmp.$wire.set === 'function') {
+                        cmp.$wire.set('quantity', qty);
+                    }
+                }
+            }
+        }
+
         function clampQuantityToStock() {
             const stock = getSelectedStock();
             const quantityInput = document.getElementById('quantity');
@@ -287,6 +311,7 @@
 
             if (stock > 0 && q > stock) q = stock;
             quantityInput.value = q;
+            syncQuantityToLivewire();
         }
 
         // Select size and update price
@@ -358,6 +383,7 @@
             if (stock > 0 && currentValue >= stock) return;
 
             quantityInput.value = currentValue + 1;
+            syncQuantityToLivewire();
         }
 
         // Decrease quantity
@@ -366,9 +392,11 @@
             let currentValue = parseInt(quantityInput.value);
             if (!Number.isFinite(currentValue) || currentValue <= 1) {
                 quantityInput.value = 1;
+                syncQuantityToLivewire();
                 return;
             }
             quantityInput.value = currentValue - 1;
+            syncQuantityToLivewire();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -403,7 +431,7 @@
             message += `Apakah produk ini masih tersedia?`;
 
             // WhatsApp number (replace with actual number)
-            const phoneNumber = '6285155227923'; // Ganti dengan nomor WhatsApp yang sebenarnya
+            const phoneNumber = '6285111230011'; // Ganti dengan nomor WhatsApp yang sebenarnya
 
             // Create WhatsApp URL
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

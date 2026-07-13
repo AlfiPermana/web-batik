@@ -335,7 +335,7 @@ function openBookingModal(workshopId, workshopName, price) {
         
         loadAvailableSchedules(workshopId);
     } catch (error) {
-        alert('Terjadi kesalahan saat membuka form booking. Silahkan refresh halaman.');
+        Swal.fire({ title: 'Gagal Membuka Form', text: 'Terjadi kesalahan saat membuka form booking. Silahkan refresh halaman.', icon: 'error', iconColor: '#ef4444', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
     }
 }
 
@@ -440,7 +440,7 @@ function handleFormSubmit(e) {
     const scheduleId = document.getElementById('scheduleId').value;
     
     if (!scheduleId) {
-        alert('Silahkan pilih jadwal workshop terlebih dahulu!');
+        Swal.fire({ title: 'Jadwal Diperlukan', text: 'Silahkan pilih jadwal workshop terlebih dahulu!', icon: 'warning', confirmButtonText: 'OK', confirmButtonColor: '#b45309', customClass: { popup: 'rounded-2xl shadow-2xl' } });
         return;
     }
     
